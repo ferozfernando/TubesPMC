@@ -1,0 +1,12 @@
+void mainmenu();
+void circuitList();
+void sourceList();
+void signList();
+void InputAC(double *A, double *f, double *phase, double *DCoff);
+void printV(char filename[], double vpos[], double vneg[], int n);
+void printV0(char filename[], double *vpos, int n);
+void printIR(char filename[], double vpos[], double vneg[], double R, int n);
+void printIR0(char filename[], double vpos[], double R, int n);
+void printIC(char filename[], double vpos[], double vneg[], double C, int n);
+void printIC0(char filename[], double vpos[], double C, int n);
+void graph ();
