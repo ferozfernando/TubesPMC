@@ -55,3 +55,15 @@ void rangkaian8(double v1[], double v2[], double v3[], double R1, double R2, dou
 	v2[i+1] = (src+i1+g1*v3[i+1])/g1;
 	v1[i+1] = (src+v2[i+1]/R1)*R1;
 }
+
+void rangkaian8V(double v1[], double v2[], double v3[], double R1, double R2, double C1, double C2, double src, int i){
+	double g1 = C1/T;
+	double g2 = C2/T;
+	double i1 = C1*(v2[i]-v3[i])/T;
+	double i2 = C2*(v3[i])/T;
+	double temp = g1/(g1+g2+1/R1);
+	v1[i+1] = src;
+	v2[i+1] = (temp*(i2-i1)+i1+(v1[i+1]/R1))/(g1+(1/R1)-g1*temp);
+	v3[i+1] = (i1+(v1[i+1]/R1)-(v2[i+1]*(1/R1+g1)))/(-g1);
+	printf("%lf\n", v1[i+1]);
+}
