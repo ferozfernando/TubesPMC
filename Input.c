@@ -9,6 +9,7 @@
 int main(){
     //Deklarasi Variabel
     int current_menu;       //Untuk menentukan menu saat ini
+    int srcType;            //Untuk menentukan tipe sumber yang digunakan(1: tegangan, 2: arus)
     int signal;             //Untuk menentukan jenis sinyal masukan
     int current_output = 0; //Untuk menentukan sinyal keluaran yang ingin diplot
     char filename[100];     //
@@ -399,8 +400,19 @@ int main(){
                 break;
 
             case 8:     //Rangkaian 8
+
+                //Menentukan tipe sumber
+                sourceType();
+                scanf("%d", &srcType);
+                while(!(srcType == 1 || srcType == 2)){
+                    printf("Invalid input!");
+                    sourceType();
+                    scanf("%d", &srcType);
+                }
+
                 //Menentukan jenis sinyal masukan (1: constant, 2: sinusoid, 3: square)
                 do{
+
                 signList();
                 scanf("%d", &signal);
 
@@ -425,8 +437,14 @@ int main(){
                         v3o = (double *)realloc(v3o, sizeof(double)*(n));
                         vsig = (double *)realloc(vsigo, sizeof(double)*(n));
                         for(int i=0; i<n-1; i++){
-                            rangkaian8(vo, v2o, v3o, R1, R2, C1, C2, A, i);
-                            vsig[i] = A;
+                            if(srcType == 1){
+                                rangkaian8V(vo, v2o, v3o, R1, R2, C1, C2, A, i);    //Sumber tegangan
+                                vsig[i] = A;
+                            }
+                            else{
+                                rangkaian8(vo, v2o, v3o, R1, R2, C1, C2, A, i);     //Sumber arus
+                                vsig[i] = A;
+                            }
                         }
                     break;
 
@@ -450,15 +468,24 @@ int main(){
                         time = 0;
                         source = genSin(A,f,phase,DCoff,time);
                         for(int i=0; i<n-1; i++){
-                            rangkaian8(vo, v2o, v3o, R1, R2, C1, C2, source, i);
-                            vsig[i] = source;
-                            time += T;
-                            source = genSin(A,f,phase,DCoff,time);
+                            if(srcType == 1){
+                                rangkaian8V(vo, v2o, v3o, R1, R2, C1, C2, source, i);   //Sumber tegangan
+                                vsig[i] = source;
+                                time += T;
+                                source = genSin(A,f,phase,DCoff,time);
+                            }
+                            else{
+                                rangkaian8(vo, v2o, v3o, R1, R2, C1, C2, source, i);    //Sumber arus
+                                vsig[i] = source;
+                                time += T;
+                                source = genSin(A,f,phase,DCoff,time);
+                            }
                         }
                     break;
 
                     case 3:
                         InputAC(&A, &f, &phase, &DCoff);
+                        printf("Input R1: ");
                         scanf("%lf", &R1);
                         printf("Input R2: ");
                         scanf("%lf", &R2);
@@ -476,10 +503,18 @@ int main(){
                         time = 0;
                         source = genSqr(A,f,phase,DCoff,time);
                         for(int i=0; i<n-1; i++){
-                            rangkaian8(vo, v2o, v3o, R1, R2, C1, C2, source, i);
-                            vsig[i] = source;
-                            time += T;
-                            source = genSqr(A,f,phase,DCoff,time);
+                            if(srcType == 1){
+                                rangkaian8V(vo, v2o, v3o, R1, R2, C1, C2, source, i);   //Sumber tegangan
+                                vsig[i] = source;
+                                time += T;
+                                source = genSqr(A,f,phase,DCoff,time);
+                            }
+                            else{
+                                rangkaian8(vo, v2o, v3o, R1, R2, C1, C2, source, i);    //Sumber arus
+                                vsig[i] = source;
+                                time += T;
+                                source = genSqr(A,f,phase,DCoff,time);
+                            }
                         }
                     break;
 
@@ -565,4 +600,6 @@ int main(){
     free(vsig);
     free(v2o);
     free(v3o);
+
+    return 0;
 }
