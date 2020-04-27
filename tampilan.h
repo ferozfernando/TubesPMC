@@ -9,4 +9,5 @@ void printIR(char filename[], double vpos[], double vneg[], double R, int n);
 void printIR0(char filename[], double vpos[], double R, int n);
 void printIC(char filename[], double vpos[], double vneg[], double C, int n);
 void printIC0(char filename[], double vpos[], double C, int n);
+void sourceType();
 void graph ();
