@@ -274,7 +274,15 @@ int main(){
                 break;
 
             case 3:     //Rangkaian 3
-                
+                //Menentukan tipe sumber
+                sourceType();
+                scanf("%d", &srcType);
+                while(!(srcType == 1 || srcType == 2)){
+                    printf("Invalid input!");
+                    sourceType();
+                    scanf("%d", &srcType);
+                }
+
                 //Menentukan jenis sinyal masukan (1: constant, 2: sinusoid, 3: square)
                 do{
                 signList();
@@ -294,11 +302,15 @@ int main(){
                         printf("\nInput duration (in s): ");
                         scanf("%lf", &t);
                         n = t/T;
-                        v = (double *)realloc(vo, sizeof(double)*(n));
-                        vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                        vo = (double *)realloc(vo, sizeof(double)*(n));
+                        v2o = (double *)realloc(v2o, sizeof(double)*(n));
                         for(int i=0; i<n-1; i++){
-                            rangkaian3(v,R1,C1,C2,vsig,i);
-                            vsig[i] = A;
+                            if(srcType == 1){
+                                rangkaian3V(vo,v2o,R1,C1,C2,A,i);
+                            }
+                            else{
+                                rangkaian3(vo,v2o,R1,C1,C2,A,i);
+                            }
                         }
                     break;
 
@@ -313,14 +325,21 @@ int main(){
                         printf("\nInput duration (in s): ");
                         scanf("%lf", &t);
                         n = t/T;
-                        v = (double *)realloc(vo, sizeof(double)*(n));
-                        vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                        vo = (double *)realloc(vo, sizeof(double)*(n));
+                        v2o = (double *)realloc(v2o, sizeof(double)*(n));
                         time = 0;
-                        vsig[0] = genSin(A,f,phase,DCoff,time);
+                        source = genSin(A,f,phase,DCoff,time);
                         for(int i=0; i<n-1; i++){
-                            rangkaian3(v,R1,C1,C2,vsig,i);
-                            time += T;
-                            vsig[i+1] = genSin(A,f,phase,DCoff,time);
+                            if(srcType == 1){
+                                rangkaian3V(vo,v2o,R1,C1,C2,source,i);
+                                time += T;
+                                source = genSin(A,f,phase,DCoff,time);
+                            }
+                            else{
+                                rangkaian3(vo,v2o,R1,C1,C2,source,i);
+                                time += T;
+                                source = genSin(A,f,phase,DCoff,time);
+                            }
                         }
                     break;
 
@@ -336,12 +355,20 @@ int main(){
                         scanf("%lf", &t);
                         time = 0;
                         n = t/T;
-                        v = (double *)realloc(vo, sizeof(double)*(n));
-                        vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                        vo = (double *)realloc(vo, sizeof(double)*(n));
+                        v2o = (double *)realloc(v2o, sizeof(double)*(n));
+                        source = genSqr(A,f,phase,DCoff,time);
                         for(int i=0; i<n-1; i++){
-                            rangkaian3(v,R1,C1,C2,vsig,i);
-                            time += T;
-                            vsig[i+1] = genSqr(A,f,phase,DCoff,time);
+                            if(srcType == 1){
+                                rangkaian3V(vo,v2o,R1,C1,C2,source,i);
+                                time += T;
+                                source = genSqr(A,f,phase,DCoff,time);
+                            }
+                            else{
+                                rangkaian3(vo,v2o,R1,C1,C2,source,i);
+                                time += T;
+                                source = genSqr(A,f,phase,DCoff,time);
+                            }
                         }
                     break;
                     
@@ -355,37 +382,48 @@ int main(){
                 //Menu untuk menampilkan grafik output rangkaian 3
                 do {
                     printf("Choose output: \n");
-                    printf("1. V(C1) \n");
-                    printf("2. V(C2) \n");
-                    printf("3. I(R) \n");
-                    printf("4. I(C1) \n");
-                    printf("5. I(C2) \n");
+                    printf("1. V(R) \n");
+                    printf("2. V(C1) \n");
+                    printf("3. V(C2) \n");
+                    printf("4. I(R) \n");
+                    printf("5. I(C1) \n");
+                    printf("6. I(C2) \n");
                     printf("0. Back\n");
                     printf("Your choice: ");
                     scanf("%d", &current_output);
                     switch(current_output){
                         case 1:
-                            printV("graph.csv", vsig, v, n);
+                            printV("graph.csv", v2o, vo, n);
                             graph();
                             break;
 
                         case 2:
-                            printV0("graph.csv", v, n);
+                            printV("graph.csv", v2o, vo, n);
                             graph();
                             break;
 
                         case 3:
-                            printIR("graph.csv", vsig, v, R1, n);
+                            printV0("graph.csv", vo, n);
                             graph();
                             break;
 
                         case 4:
-                            printIC("graph.csv", vsig, v, C1, n);
+                            printIR("graph.csv", v2o, vo, R1, n);
                             graph();
                             break;
 
                         case 5:
-                            printIC0("graph.csv", v, C2, n);
+                            printIC("graph.csv", v2o, vo, C1, n);
+                            graph();
+                            break;
+
+                        case 6:
+                            printIC0("graph.csv", vo, C2, n);
+                            graph();
+                            break;
+
+                        case 7:
+                            printV0("graph.csv", v2o, n);
                             graph();
                             break;
 
