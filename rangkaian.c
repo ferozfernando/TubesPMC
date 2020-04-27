@@ -45,3 +45,13 @@ void rangkaian4(double v2[],double R1, double R2, double C, double Src, int i){
 	double Ia = C*(Src-v2[i])/T;
 	v2[i+1]	  = (Src*(Ga+(1/R1))-Ia)/(Ga+(1/R1)+(1/R2));
 }
+
+void rangkaian8(double v1[], double v2[], double v3[], double R1, double R2, double C1, double C2, double src, int i){
+	double g1 = C1/T;
+	double g2 = C2/T;
+	double i1 = C1*(v2[i]-v3[i])/T;
+	double i2 = C2*(v3[i])/T;
+	v3[i+1] = (src+i2)/(g2+1/R2);
+	v2[i+1] = (src+i1+g1*v3[i+1])/g1;
+	v1[i+1] = (src+v2[i+1]/R1)*R1;
+}
