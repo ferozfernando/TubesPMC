@@ -39,6 +39,13 @@ void signList(){
     printf("Your Choice: ");
 }
 
+void sourceType(){
+    printf("Choose Source Type: \n");
+    printf("1. Voltage Source \n");
+    printf("2. Current Source \n");
+    printf("Your Choice: ");
+}
+
 void InputAC(double *A, double *f, double *phase, double *DCoff){
     printf("Amplitude value: ");
     scanf("%lf", A);
@@ -128,5 +135,5 @@ void printIC0(char filename[], double vpos[], double C, int n){
 }
 
 void graph(){                                      ///Fungsi untuk membuat grafik
-    system("python3 graph.py");                    ///Panggil python untuk membuat grafik
+    system("python graph.py");                    ///Panggil python untuk membuat grafik
 }
