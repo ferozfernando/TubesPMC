@@ -12,7 +12,6 @@ int main(){
     int srcType;            //Untuk menentukan tipe sumber yang digunakan(1: tegangan, 2: arus)
     int signal;             //Untuk menentukan jenis sinyal masukan
     int current_output = 0; //Untuk menentukan sinyal keluaran yang ingin diplot
-    char filename[100];     //
     double temp;            //Menyimpan nilai tipe data double untuk sementara
     double A;               //Menyimpan nilai amplituda sinyal input
     double f;               //Menyimpan nilai frekuensi sinyal input
@@ -382,48 +381,55 @@ int main(){
                 //Menu untuk menampilkan grafik output rangkaian 3
                 do {
                     printf("Choose output: \n");
-                    printf("1. V(R) \n");
-                    printf("2. V(C1) \n");
-                    printf("3. V(C2) \n");
-                    printf("4. I(R) \n");
-                    printf("5. I(C1) \n");
-                    printf("6. I(C2) \n");
+                    printf("1. V(1) \n");
+                    printf("2. V(2) \n");
+                    printf("3. V(R) \n");
+                    printf("4. V(C1) \n");
+                    printf("5. V(C2) \n");
+                    printf("6. I(R) \n");
+                    printf("7. I(C1) \n");
+                    printf("8. I(C2) \n");
                     printf("0. Back\n");
                     printf("Your choice: ");
                     scanf("%d", &current_output);
                     switch(current_output){
                         case 1:
-                            printV("graph.csv", v2o, vo, n);
-                            graph();
-                            break;
-
-                        case 2:
-                            printV("graph.csv", v2o, vo, n);
-                            graph();
-                            break;
-
-                        case 3:
                             printV0("graph.csv", vo, n);
                             graph();
                             break;
 
+                        case 2:
+                            printV0("graph.csv", v2o, n);
+                            graph();
+                            break;
+
+                        case 3:
+                            printV("graph.csv", v2o, vo, n);
+                            graph();
+                            break;
+
                         case 4:
-                            printIR("graph.csv", v2o, vo, R1, n);
+                            printV("graph.csv", v2o, vo, n);
                             graph();
                             break;
 
                         case 5:
-                            printIC("graph.csv", v2o, vo, C1, n);
+                            printV0("graph.csv", vo, n);
                             graph();
                             break;
 
                         case 6:
-                            printIC0("graph.csv", vo, C2, n);
+                            printIR("graph.csv", v2o, vo, R1, n);
                             graph();
                             break;
 
                         case 7:
-                            printV0("graph.csv", v2o, n);
+                            printIC("graph.csv", v2o, vo, C1, n);
+                            graph();
+                            break;
+
+                        case 8:
+                            printIC0("graph.csv", vo, C2, n);
                             graph();
                             break;
 
@@ -564,54 +570,72 @@ int main(){
                                 //Menu untuk menampilkan grafik output rangkaian 3
                 do {
                     printf("Choose output: \n");
-                    printf("1. V(R1) \n");
-                    printf("2. V(R2) \n");
-                    printf("3. V(C1) \n");
-                    printf("4. V(C2) \n");
-                    printf("5. I(R1) \n");
-                    printf("6. I(R2) \n");
-                    printf("7. I(C1) \n");
-                    printf("8. I(C2) \n");
+                    printf("1. V(1) \n");
+                    printf("2. V(2) \n");
+                    printf("3. V(3) \n");
+                    printf("4. V(R1) \n");
+                    printf("5. V(R2) \n");
+                    printf("6. V(C1) \n");
+                    printf("7. V(C2) \n");
+                    printf("8. I(R1) \n");
+                    printf("9. I(R2) \n");
+                    printf("10. I(C1) \n");
+                    printf("11. I(C2) \n");
                     printf("0. Back\n");
                     printf("Your choice: ");
                     scanf("%d", &current_output);
                     switch(current_output){
                         case 1:
-                            printV("graph.csv", vo, v2o, n);
+                            printV0("graph.csv", vo, n);
                             graph();
                             break;
-
+                        
                         case 2:
-                            printV0("graph.csv", v3o, n);
+                            printV0("graph.csv", v2o, n);
                             graph();
                             break;
 
                         case 3:
-                            printV("graph.csv", v2o, v3o, n);
-                            graph();
-                            break;
-
-                        case 4:
                             printV0("graph.csv", v3o, n);
                             graph();
                             break;
 
+                        case 4:
+                            printV("graph.csv", vo, v2o, n);
+                            graph();
+                            break;
+
                         case 5:
-                            printIR("graph.csv", vo, v2o, R1, n);
+                            printV0("graph.csv", v3o, n);
                             graph();
                             break;
 
                         case 6:
-                            printIR0("graph.csv", v3o, R2, n);
+                            printV("graph.csv", v2o, v3o, n);
                             graph();
                             break;
 
                         case 7:
-                            printIC("graph.csv", v2o, v3o, C1, n);
+                            printV0("graph.csv", v3o, n);
                             graph();
                             break;
 
                         case 8:
+                            printIR("graph.csv", vo, v2o, R1, n);
+                            graph();
+                            break;
+
+                        case 9:
+                            printIR0("graph.csv", v3o, R2, n);
+                            graph();
+                            break;
+
+                        case 10:
+                            printIC("graph.csv", v2o, v3o, C1, n);
+                            graph();
+                            break;
+
+                        case 11:
                             printIC0("graph.csv", v3o, C2, n);
                             graph();
                             break;
