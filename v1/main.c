@@ -250,9 +250,9 @@ int main(){
                         time = 0;
                         vsig[0] = genSin(A,f,phase,DCoff,time);
                         for(int i=0; i<n-1; i++){
+                            vsig[i+1] = genSin(A,f,phase,DCoff,time);
                             rangkaian3(v,R1,C1,C2,vsig,i);
                             time += T;
-                            vsig[i+1] = genSin(A,f,phase,DCoff,time);
                         }
                     break;
 
@@ -264,9 +264,9 @@ int main(){
                         v = (double *)realloc(vo, sizeof(double)*(n));
                         vsig = (double *)realloc(vsigo, sizeof(double)*(n));
                         for(int i=0; i<n-1; i++){
+                            vsig[i+1] = genSqr(A,f,phase,DCoff,time);
                             rangkaian3(v,R1,C1,C2,vsig,i);
                             time += T;
-                            vsig[i+1] = genSqr(A,f,phase,DCoff,time);
                         }
                     break;
 
@@ -345,9 +345,9 @@ int main(){
                             time = 0;
                             vsig[0] = genSin(A,f,phase,DCoff,time);
                             for (int i = 0; i<n-1; i++){
-                                rangkaian4(v2,R1,R2,C1,vsig,i);
-                                time += T;
                                 vsig[i+1] = genSin(A,f,phase,DCoff,time);
+                                rangkaian4(v2,R1,R2,C1,vsig,i);
+                                time += T;                               
                             }
                         break;
 
@@ -360,9 +360,9 @@ int main(){
                             time = 0;
                             vsig[0] = genSqr(A,f,phase,DCoff,time);
                             for (int i = 0; i<n-1; i++){
+                                vsig[i+1] = genSqr(A,f,phase,DCoff,time);
                                 rangkaian4(v2,R1,R2,C1,vsig,i);
                                 time += T;
-                                vsig[i+1] = genSqr(A,f,phase,DCoff,time);
                             }
                         break;
 
@@ -441,9 +441,9 @@ int main(){
                             time = 0;
                             vsig[0] = genSin(A,f,phase,DCoff,time);
                             for (int i = 0; i<n-1; i++){
+                                vsig[i+1] = genSin(A,f,phase,DCoff,time);
                                 rangkaian5(v2,R1,R2,C1,C2,vsig,i);
                                 time += T;
-                                vsig[i+1] = genSin(A,f,phase,DCoff,time);
                             }
                         break;
 
@@ -456,9 +456,9 @@ int main(){
                             time = 0;
                             vsig[0] = genSqr(A,f,phase,DCoff,time);
                             for (int i = 0; i<n-1; i++){
+                                vsig[i+1] = genSqr(A,f,phase,DCoff,time);
                                 rangkaian5(v2,R1,R2,C1,C2,vsig,i);
                                 time += T;
-                                vsig[i+1] = genSqr(A,f,phase,DCoff,time);
                             }
                         break;
 
@@ -653,9 +653,9 @@ int main(){
                             time = 0;
                             vsig[0] = genSin(A,f,phase,DCoff,time);
                             for (int i = 0; i<n-1; i++){
+                                vsig[i+1] = genSin(A,f,phase,DCoff,time);
                                 rangkaian7(v2,v3,R1,R2,C1,C2,vsig,i);
                                 time += T;
-                                vsig[i+1] = genSin(A,f,phase,DCoff,time);
                             }
                         break;
 
@@ -670,9 +670,9 @@ int main(){
                             time = 0;
                             vsig[0] = genSqr(A,f,phase,DCoff,time);
                             for (int i = 0; i<n-1; i++){
-                                rangkaian7(v2,v3,R1,R2,C1,C2,vsig,i);
-                                time += T;
                                 vsig[i+1] = genSqr(A,f,phase,DCoff,time);
+                                rangkaian7(v2,v3,R1,R2,C1,C2,vsig,i);
+                                time += T;   
                             }
                         break;
 
@@ -711,14 +711,18 @@ int main(){
                             graph();
                         break;
 
-                        case 7: ///IC1
                         case 6: ///IR2
                             printIR("graph.csv",v2,v3,R2,n);
                             graph();
                         break;
 
+                        case 7: ///IC1
+                            printIC0("graph.csv",v3,C1,n);
+                            graph();
+                        break;
+
                         case 8: ///IC2
-                            printIC0("graph.csv",v2,C1,n);
+                            printIC0("graph.csv",v2,C2,n);
                             graph();
                         break;
 
