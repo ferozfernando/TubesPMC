@@ -80,6 +80,17 @@ void rangkaian5(double v2[],double R1, double R2, double C1, double C2, double S
 	v2[i+1]   = (Src[i]*(Ga+G1)+Ib-Ia)/(Ga+Gb+G1+G2);
 }
 
+void rangkaian5I(double v1[],double v2[],double R1, double R2, double C1, double C2, double Is, int i){
+	double Ga = C1/T;
+	double Gb = C2/T;
+	double G1 = 1/R1;
+	double G2 = 1/R2;
+	double Ia = Ga*(v1[i]-v2[i]);
+	double Ib = Gb*(v2[i]);
+	v2[i+1]   = (Ib+Is)/(G2+Gb);
+	v1[i+1]	  = (Is+Ia)/(G1+Ga)+v2[i+1];
+}
+
 void rangkaian6(double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i){
 	double Ga = C1/T;
 	double Gb = C2/T;
