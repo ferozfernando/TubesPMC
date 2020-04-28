@@ -52,7 +52,8 @@ int main(){
 
         switch(current_menu) //Switch case jenis rangkaian berdasarkan input yang dimasukkan user
         {
-            case 1:     //Rangkaian 1(coba dites)
+            //RANGKAIAN 1(coba dites)
+            case 1:
 
                 //Menentukan jenis sinyal masukan (1: constant, 2: sinusoid, 3: square)
                 do{
@@ -155,8 +156,8 @@ int main(){
                 } while (current_output != 0);
                 break;
 
-            case 2:     //Rangkaian 2(coba dites)
-                
+            //RANGKAIAN 2(coba dites)
+            case 2:
                 //Menentukan jenis sinyal masukan (1: constant, 2: sinusoid, 3: square)
                 do{
                 signList();
@@ -265,7 +266,8 @@ int main(){
                 } while (current_output != 0);
                 break;
 
-            case 3:     //Rangkaian 3(coba dites)
+            //RANGKAIAN 3(coba dites)
+            case 3:
                 //Menentukan tipe sumber
                 sourceType(&srcType);
 
@@ -420,7 +422,8 @@ int main(){
                 } while (current_output != 0);
                 break;
             
-            case 4:     //Rangkaian 4
+            //RANGKAIAN 4(buat sumber arus masih salah)
+            case 4:
                 sourceType(&srcType); //Menentukan tipe sumber
                 signList();
                 scanf ("%d", &signal);
@@ -544,8 +547,9 @@ int main(){
                     }while(current_output != 0);
 
                 break;
-            ///RANGKAIAN 5
+            ///RANGKAIAN 5 (coba dites)
             case 5:
+                sourceType(&srcType); //Menentukan tipe sumber
                 signList();
                 scanf("%d", &signal);
                 do{
@@ -570,12 +574,24 @@ int main(){
                             n = t/T;
                             v2 = (double *)realloc(vo, sizeof(double)*(n));
                             vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                            time = 0;
-                            vsig[0] = genSin(A,f,phase,DCoff,time);
+                            if(srcType == 1){
+                                time = 0;
+                                vsig[0] = genSin(A,f,phase,DCoff,time);
+                            }
+                            else{
+                                time = T;
+                                source = genSin(A,f,phase,DCoff,time);
+                            }
                             for (int i = 0; i<n-1; i++){
-                                rangkaian5(v2,R1,R2,C1,C2,vsig,i);
-                                time += T;
-                                vsig[i+1] = genSin(A,f,phase,DCoff,time);
+                                if(srcType == 1){
+                                    rangkaian5(v2,R1,R2,C1,C2,vsig,i);
+                                    time += T;
+                                    vsig[i+1] = genSin(A,f,phase,DCoff,time);
+                                }
+                                else{
+                                    rangkaian5I(vsig, v2,R1,R2,C1,C2,source,i);
+                                    time += T;
+                                    source = genSin(A,f,phase,DCoff,time);                                }
                             }
                         break;
 
@@ -585,12 +601,25 @@ int main(){
                             n = t/T;
                             v2 = (double *)realloc(vo, sizeof(double)*(n));
                             vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                            time = 0;
-                            vsig[0] = genSqr(A,f,phase,DCoff,time);
+                            if(srcType == 1){
+                                time = 0;
+                                vsig[0] = genSqr(A,f,phase,DCoff,time);
+                            }
+                            else{
+                                time = T;
+                                source = genSqr(A,f,phase,DCoff,time);
+                            }
                             for (int i = 0; i<n-1; i++){
-                                rangkaian5(v2,R1,R2,C1,C2,vsig,i);
-                                time += T;
-                                vsig[i+1] = genSqr(A,f,phase,DCoff,time);
+                                if(srcType == 1){
+                                    rangkaian5(v2,R1,R2,C1,C2,vsig,i);
+                                    time += T;
+                                    vsig[i+1] = genSqr(A,f,phase,DCoff,time);
+                                }
+                                else{
+                                    rangkaian5I(vsig, v2,R1,R2,C1,C2,source,i);
+                                    time += T;
+                                    source = genSqr(A,f,phase,DCoff,time); 
+                                }
                             }
                         break;
 
@@ -864,7 +893,8 @@ int main(){
                 }while(current_output != 0);
                 break;
 
-            case 8:     //Rangkaian 8 (coba dites)
+            //RANGKAIAN 8 (coba dites)
+            case 8:
 
                 //Menentukan tipe sumber
                 sourceType(&srcType);
