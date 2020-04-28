@@ -544,9 +544,9 @@ int main(){
                             time = 0;
                             vsig[0] = genSin(A,f,phase,DCoff,time);
                             for (int i = 0; i<n-1; i++){
+                                vsig[i+1] = genSin(A,f,phase,DCoff,time);
                                 rangkaian6(v2,v3,R1,R2,C1,C2,vsig,i);
                                 time += T;
-                                vsig[i+1] = genSin(A,f,phase,DCoff,time);
                             }
                         break;
 
@@ -560,9 +560,9 @@ int main(){
                             time = 0;
                             vsig[0] = genSqr(A,f,phase,DCoff,time);
                             for (int i = 0; i<n-1; i++){
+                                vsig[i+1] = genSqr(A,f,phase,DCoff,time);
                                 rangkaian6(v2,v3,R1,R2,C1,C2,vsig,i);
                                 time += T;
-                                vsig[i+1] = genSqr(A,f,phase,DCoff,time);
                             }
                         break;
 
