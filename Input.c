@@ -4,7 +4,7 @@
 #include <math.h>
 #include "rangkaian.h"
 #include "tampilan.h"
-#define T 0.0001
+#define T 0.00001
 
 int main(){
     //Deklarasi Variabel
@@ -422,7 +422,7 @@ int main(){
                 } while (current_output != 0);
                 break;
             
-            //RANGKAIAN 4(buat sumber arus masih salah)
+            //RANGKAIAN 4 (Sumber tegangan kotak hasil aneh, sisanya oke)
             case 4:
                 sourceType(&srcType); //Menentukan tipe sumber
                 signList();
@@ -430,46 +430,44 @@ int main(){
                     do{
                         switch(signal){
                             ///KONSTAN
-                            case 1:
+                            case 1: //OK
                                 printf("Amplitude value: ");
                                 scanf("%lf", &A);
                                 menuRRC(&R1,&R2,&C1,&t);
                                 n = t/T;
-                                v2 = (double *)realloc(vo, sizeof(double)*(n));
+                                v  = (double *)realloc(vo, sizeof(double)*(n));
+                                v2 = (double *)realloc(v2o, sizeof(double)*(n));
                                 vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                                vsig[0] = A;
                                 for (int i=0; i<n-1; i++){
+                                    vsig[i+1] = A;
                                     if(srcType == 1){
-                                        rangkaian4(v2,R1,R2,C1,vsig,i);
-                                        vsig[i] = A;
+                                        rangkaian4(v,v2,R1,R2,C1,vsig,i);
+                                    }
+                                    else{
+                                        rangkaian4I(v,v2,R1,R2,C1,vsig,i);
                                     }
                                 }
                             break;
 
-                            case 2:
+                            case 2: //OK
                                 InputAC(&A, &f, &phase, &DCoff);
                                 menuRRC(&R1,&R2,&C1,&t);
                                 n = t/T;
-                                v2 = (double *)realloc(vo, sizeof(double)*(n));
+                                v  = (double *)realloc(vo, sizeof(double)*(n));
+                                v2 = (double *)realloc(v2o, sizeof(double)*(n));
                                 vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                                if(srcType == 1){
-                                    time = 0;
-                                    vsig[0] = genSin(A,f,phase,DCoff,time);
-                                }
-                                else{
-                                    time = T;
-                                    source = genSin(A,f,phase,DCoff,time);
-                                }
+                                time = 0;
+                                vsig[0] = genSin(A,f,phase,DCoff,time);
                                 for (int i = 0; i<n-1; i++){
+                                    vsig[i+1] = genSin(A,f,phase,DCoff,time+T);
                                     if(srcType == 1){
-                                        rangkaian4(v2,R1,R2,C1,vsig,i);
-                                        time += T;
-                                        vsig[i+1] = genSin(A,f,phase,DCoff,time);
+                                        rangkaian4(v,v2,R1,R2,C1,vsig,i);
                                     }
                                     else{
-                                        rangkaian4I(vsig,v2,R1,R2,C1,source,i);
-                                        time += T;
-                                        source = genSin(A,f,phase,DCoff,time);
+                                        rangkaian4I(v,v2,R1,R2,C1,vsig,i);
                                     }
+                                    time += T;
                                 }
                             break;
 
@@ -477,27 +475,21 @@ int main(){
                                 InputAC(&A, &f, &phase, &DCoff);
                                 menuRRC(&R1,&R2,&C1,&t);
                                 n = t/T;
-                                v2 = (double *)realloc(vo, sizeof(double)*(n));
+                                v  = (double *)realloc(vo, sizeof(double)*(n));
+                                v2 = (double *)realloc(v2o, sizeof(double)*(n));
                                 vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                                if(srcType == 1){
-                                    time = 0;
-                                    vsig[0] = genSqr(A,f,phase,DCoff,time);
-                                }
-                                else{
-                                    time = T;
-                                    source = genSqr(A,f,phase,DCoff,time);
-                                }
+                                time = 0;
+                                vsig[0] = genSqr(A,f,phase,DCoff,time);
                                 for (int i = 0; i<n-1; i++){
+                                    vsig[i+1] = genSqr(A,f,phase,DCoff,time+T);
                                     if(srcType == 1){
-                                        rangkaian4(v2,R1,R2,C1,vsig,i);
-                                        time += T;
-                                        vsig[i+1] = genSqr(A,f,phase,DCoff,time);
+                                        //Hasil Aneh, keinvert
+                                        rangkaian4(v,v2,R1,R2,C1,vsig,i);
                                     }
                                     else{
-                                        rangkaian4I(vsig,v2,R1,R2,C1,source,i);
-                                        time += T;
-                                        source = genSqr(A,f,phase,DCoff,time);
+                                        rangkaian4I(v,v2,R1,R2,C1,vsig,i);
                                     }
+                                    time += T;
                                 }
                             break;
 
@@ -513,7 +505,7 @@ int main(){
                         switch (current_output){
                             case 1: ///VR1
                             case 3: ///VC
-                                printV("graph.csv",vsig,v2,n);
+                                printV("graph.csv",v,v2,n);
                                 graph();
                             break;
 
@@ -523,7 +515,7 @@ int main(){
                             break;
 
                             case 4: ///IR1
-                                printIR("graph.csv",vsig,v2,R1,n);
+                                printIR("graph.csv",v,v2,R1,n);
                                 graph();
                             break;
 
@@ -533,7 +525,7 @@ int main(){
                             break;
 
                             case 6: ///IC
-                                printIC("graph.csv",vsig,v2,C1,n);
+                                printIC("graph.csv",v,v2,C1,n);
                                 graph();
                             break;
 
@@ -674,58 +666,79 @@ int main(){
                     }
                 }while(current_output != 0);
                 break;
-            ///RANGKAIAN 6
+            ///RANGKAIAN 6 (Sumber tegangan kotak hasil aneh, sisanya oke)
             case 6:
+                sourceType(&srcType); //Menentukan tipe sumber
                 signList();
                 scanf("%d", &signal);
                 do{
                     switch(signal){
                         ///KONSTAN
-                        case 1:
-                            printf("Amplitude value: ");
-                            scanf("%lf", &A);
-                            menuRRCC(&R1,&R2,&C1,&C2,&t);
-                            n = t/T;
-                            v2 = (double *)realloc(vo, sizeof(double)*(n));
-                            v3 = (double *)realloc(v2o, sizeof(double)*(n));
-                            vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                            for (int i=0; i<n-1; i++){
-                                rangkaian6(v2,v3,R1,R2,C1,C2,vsig,i);
-                                vsig[i] = A;
-                            }
-                        break;
+                        case 1: //OK
+                                printf("Amplitude value: ");
+                                scanf("%lf", &A);
+                                menuRRCC(&R1,&R2,&C1,&C2,&t);
+                                n = t/T;
+                                v  = (double *)realloc(vo, sizeof(double)*(n));
+                                v2 = (double *)realloc(v2o, sizeof(double)*(n));
+                                v3 = (double *)realloc(v3o, sizeof(double)*(n));
+                                vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                                vsig[0] = A;
+                                for (int i=0; i<n-1; i++){
+                                    vsig[i+1] = A;
+                                    if(srcType == 1){
+                                        rangkaian6(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    else{
+                                        rangkaian6I(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                }
+                            break;
 
-                        case 2:
-                            InputAC(&A, &f, &phase, &DCoff);
-                            menuRRCC(&R1,&R2,&C1,&C2,&t);
-                            n = t/T;
-                            v2 = (double *)realloc(vo, sizeof(double)*(n));
-                            v3 = (double *)realloc(v2o, sizeof(double)*(n));
-                            vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                            time = 0;
-                            vsig[0] = genSin(A,f,phase,DCoff,time);
-                            for (int i = 0; i<n-1; i++){
-                                rangkaian6(v2,v3,R1,R2,C1,C2,vsig,i);
-                                time += T;
-                                vsig[i+1] = genSin(A,f,phase,DCoff,time);
-                            }
-                        break;
+                            case 2: //OK
+                                InputAC(&A, &f, &phase, &DCoff);
+                                menuRRCC(&R1,&R2,&C1,&C2,&t);
+                                n = t/T;
+                                v  = (double *)realloc(vo, sizeof(double)*(n));
+                                v2 = (double *)realloc(v2o, sizeof(double)*(n));
+                                v3 = (double *)realloc(v3o, sizeof(double)*(n));
+                                vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                                time = 0;
+                                vsig[0] = genSin(A,f,phase,DCoff,time);
+                                for (int i = 0; i<n-1; i++){
+                                    vsig[i+1] = genSin(A,f,phase,DCoff,time+T);
+                                    if(srcType == 1){
+                                        rangkaian6(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    else{
+                                        rangkaian6I(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    time += T;
+                                }
+                            break;
 
-                        case 3:
-                            InputAC(&A, &f, &phase, &DCoff);
-                            menuRRCC(&R1,&R2,&C1,&C2,&t);
-                            n = t/T;
-                            v2 = (double *)realloc(vo, sizeof(double)*(n));
-                            v3 = (double *)realloc(v2o, sizeof(double)*(n));
-                            vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                            time = 0;
-                            vsig[0] = genSqr(A,f,phase,DCoff,time);
-                            for (int i = 0; i<n-1; i++){
-                                rangkaian6(v2,v3,R1,R2,C1,C2,vsig,i);
-                                time += T;
-                                vsig[i+1] = genSqr(A,f,phase,DCoff,time);
-                            }
-                        break;
+                            case 3:
+                                InputAC(&A, &f, &phase, &DCoff);
+                                menuRRCC(&R1,&R2,&C1,&C2,&t);
+                                n = t/T;
+                                v  = (double *)realloc(vo, sizeof(double)*(n));
+                                v2 = (double *)realloc(v2o, sizeof(double)*(n));
+                                v3 = (double *)realloc(v3o, sizeof(double)*(n));
+                                vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                                time = 0;
+                                vsig[0] = genSqr(A,f,phase,DCoff,time);
+                                for (int i = 0; i<n-1; i++){
+                                    vsig[i+1] = genSqr(A,f,phase,DCoff,time+T);
+                                    if(srcType == 1){
+                                        //Hasil Aneh kayak keinvert
+                                        rangkaian6(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    else{
+                                        rangkaian6I(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    time += T;
+                                }
+                            break;
 
                         default:
                             printf("Invalid Input!\n");
@@ -748,7 +761,7 @@ int main(){
                         break;
 
                         case 3: ///VC1
-                            printV("graph.csv",vsig,v2,n);
+                            printV("graph.csv",v,v2,n);
                             graph();
                         break;
 
@@ -769,7 +782,7 @@ int main(){
                         break;
 
                         case 7: ///IC1
-                            printIC("graph.csv",vsig,v2,C1,n);
+                            printIC("graph.csv",v,v2,C1,n);
                             graph();
                         break;
 
@@ -784,58 +797,77 @@ int main(){
                 break;
             ///RANGKAIAN 7
             case 7:
+                sourceType(&srcType); //Menentukan tipe sumber
                 signList();
                 scanf("%d", &signal);
                 do{
                     switch(signal){
                         ///KONSTAN
-                        case 1:
-                            printf("Amplitude value: ");
-                            scanf("%lf", &A);
-                            menuRRCC(&R1,&R2,&C1,&C2,&t);
-                            n = t/T;
-                            v2 = (double *)realloc(vo, sizeof(double)*(n));
-                            v3 = (double *)realloc(v2o, sizeof(double)*(n));
-                            vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                            for (int i=0; i<n-1; i++){
-                                rangkaian7(v2,v3,R1,R2,C1,C2,vsig,i);
-                                vsig[i] = A;
-                            }
-                        break;
+                        case 1: //OK
+                                printf("Amplitude value: ");
+                                scanf("%lf", &A);
+                                menuRRCC(&R1,&R2,&C1,&C2,&t);
+                                n = t/T;
+                                v  = (double *)realloc(vo, sizeof(double)*(n));
+                                v2 = (double *)realloc(v2o, sizeof(double)*(n));
+                                v3 = (double *)realloc(v3o, sizeof(double)*(n));
+                                vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                                vsig[0] = A;
+                                for (int i=0; i<n-1; i++){
+                                    vsig[i+1] = A;
+                                    if(srcType == 1){
+                                        rangkaian7(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    else{
+                                        rangkaian7I(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                }
+                            break;
 
-                        ///SINUSOID
-                        case 2:
-                            InputAC(&A, &f, &phase, &DCoff);
-                            menuRRCC(&R1,&R2,&C1,&C2,&t);
-                            n = t/T;
-                            v2 = (double *)realloc(vo, sizeof(double)*(n));
-                            v3 = (double *)realloc(v2o, sizeof(double)*(n));
-                            vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                            time = 0;
-                            vsig[0] = genSin(A,f,phase,DCoff,time);
-                            for (int i = 0; i<n-1; i++){
-                                rangkaian7(v2,v3,R1,R2,C1,C2,vsig,i);
-                                time += T;
-                                vsig[i+1] = genSin(A,f,phase,DCoff,time);
-                            }
-                        break;
+                            case 2: //OK
+                                InputAC(&A, &f, &phase, &DCoff);
+                                menuRRCC(&R1,&R2,&C1,&C2,&t);
+                                n = t/T;
+                                v  = (double *)realloc(vo, sizeof(double)*(n));
+                                v2 = (double *)realloc(v2o, sizeof(double)*(n));
+                                v3 = (double *)realloc(v3o, sizeof(double)*(n));
+                                vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                                time = 0;
+                                vsig[0] = genSin(A,f,phase,DCoff,time);
+                                for (int i = 0; i<n-1; i++){
+                                    vsig[i+1] = genSin(A,f,phase,DCoff,time+T);
+                                    if(srcType == 1){
+                                        rangkaian7(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    else{
+                                        rangkaian7I(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    time += T;
+                                }
+                            break;
 
-                        ///KOTAK
-                        case 3:
-                            InputAC(&A, &f, &phase, &DCoff);
-                            menuRRCC(&R1,&R2,&C1,&C2,&t);
-                            n = t/T;
-                            v2 = (double *)realloc(vo, sizeof(double)*(n));
-                            v3 = (double *)realloc(v2o, sizeof(double)*(n));
-                            vsig = (double *)realloc(vsigo, sizeof(double)*(n));
-                            time = 0;
-                            vsig[0] = genSqr(A,f,phase,DCoff,time);
-                            for (int i = 0; i<n-1; i++){
-                                rangkaian7(v2,v3,R1,R2,C1,C2,vsig,i);
-                                time += T;
-                                vsig[i+1] = genSqr(A,f,phase,DCoff,time);
-                            }
-                        break;
+                            case 3:
+                                InputAC(&A, &f, &phase, &DCoff);
+                                menuRRCC(&R1,&R2,&C1,&C2,&t);
+                                n = t/T;
+                                v  = (double *)realloc(vo, sizeof(double)*(n));
+                                v2 = (double *)realloc(v2o, sizeof(double)*(n));
+                                v3 = (double *)realloc(v3o, sizeof(double)*(n));
+                                vsig = (double *)realloc(vsigo, sizeof(double)*(n));
+                                time = 0;
+                                vsig[0] = genSqr(A,f,phase,DCoff,time);
+                                for (int i = 0; i<n-1; i++){
+                                    vsig[i+1] = genSqr(A,f,phase,DCoff,time+T);
+                                    if(srcType == 1){
+                                        //Hasil Aneh kayak keinvert
+                                        rangkaian7(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    else{
+                                        rangkaian7I(v,v2,v3,R1,R2,C1,C2,vsig,i);
+                                    }
+                                    time += T;
+                                }
+                            break;
 
                         default:
                             printf("Invalid Input!\n");
@@ -848,7 +880,7 @@ int main(){
                     scanf("%d", &current_output);
                     switch (current_output){
                         case 1: ///VR1
-                            printV("graph.csv",vsig,v2,n);
+                            printV("graph.csv",v,v2,n);
                             graph();
                         break;
 
@@ -868,18 +900,18 @@ int main(){
                         break;
 
                         case 5: ///IR1
-                            printIR("graph.csv",vsig,v2,R1,n);
-                            graph();
-                        break;
-
-                        case 7: ///IC1
-                        case 6: ///IR2
-                            printIR("graph.csv",v2,v3,R2,n);
+                            printIR("graph.csv",v,v2,R1,n);
                             graph();
                         break;
 
                         case 8: ///IC2
-                            printIC0("graph.csv",v2,C1,n);
+                            printIC0("graph.csv",v2,C2,n);
+                            graph();
+                        break;
+
+                        case 6: ///IR2
+                        case 7: ///IC1
+                            printIR("graph.csv",v2,v3,R2,n);
                             graph();
                         break;
 

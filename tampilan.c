@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include<stdlib.h>
-#define T 0.0001
+#define T 0.00001
 
 void mainmenu(){
     printf("  _____   _____    _____ _                 _       _             \n");
@@ -235,5 +235,5 @@ void outRRCC(){
 }
 
 void graph(){                                      ///Fungsi untuk membuat grafik
-    system("python graph.py");                    ///Panggil python untuk membuat grafik
+    system("python3 graph.py");                    ///Panggil python untuk membuat grafik
 }
