@@ -91,8 +91,8 @@ void rangkaian6(double v1[],double v2[],double v3[],double R1, double R2, double
 	double Ia = Ga*(Src[i]-v2[i]);
 	double Ib = Gb*(v3[i]);
 	v1[i+1] = Src[i+1];
-	v2[i+1] = ((Src[i+1]*Ga)-Ia+(Ib/(1+(Gb*R2))))/(Ga+(Gb/(1+Gb*R2))+(1/R1));
-	v3[i+1] = (v2[i+1]+(Ib*R2))/(1+(R2*Gb));
+	v2[i+1] = ((Src[i+1]*Ga)-Ia+(Ib/(1+(Gb*R1))))/(Ga+(Gb/(1+Gb*R1))+(1/R2));
+	v3[i+1] = (v2[i+1]+(Ib*R1))/(1+(R1*Gb));
 } //Kalo pas source sinus, IC2 ada initial valuenya gatau kenapa...
 
 void rangkaian6I(double v1[],double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i){
@@ -100,8 +100,8 @@ void rangkaian6I(double v1[],double v2[],double v3[],double R1, double R2, doubl
 	double Gb = C2/T;
 	double Ia = Ga*(v1[i]-v2[i]);
 	double Ib = Gb*(v3[i]);
-	v2[i+1] = (Src[i+1]+(Ib/(1+(Gb*R2))))/((1/R1)+(Gb/(1+(Gb*R2))));
-	v3[i+1] = (v2[i+1]+(Ib*R2))/(1+(R2*Gb));
+	v2[i+1] = (Src[i+1]+(Ib/(1+(Gb*R1))))/((1/R2)+(Gb/(1+(Gb*R1))));
+	v3[i+1] = (v2[i+1]+(Ib*R1))/(1+(R1*Gb));
 	v1[i+1] = (((Src[i+1]+Ia)/Ga)+v2[i+1]);
 } //Kalo pas source sinus, IC2 ada initial valuenya gatau kenapa...
 
