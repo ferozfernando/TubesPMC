@@ -1,6 +1,5 @@
 #include <math.h>
 #include<stdio.h>
-#define T 0.00001
 
 double genSin(double A, double f, double phase, double DC, double time){
     return A*sin(2*M_PI*f*time + phase) + DC;
@@ -19,20 +18,19 @@ double genSqr(double A, double f, double phase, double DC, double time){
 //         //Belum kepikiran caranya//
 // }
 
-void rangkaian1(double *v, double R, double C, double src, int i){
+void rangkaian1(double *v, double R, double C, double src, int i, double T){
 	double Ia = C*v[i]/T;
 	double Ga = C/T;
   	v[i+1] 	  = (src+Ia*R)/(1+Ga*R);
-  	// printf("%lf\n",v[i]);
 }
 
-void rangkaian2(double v[], double R, double C, double src, int i){
+void rangkaian2(double v[], double R, double C, double src, int i, double T){
 	double Ia = C*v[i]/T;
 	double Ga = C/T;
   	v[i+1]    = (src+Ia)/(Ga+(1/R));
 }
 
-void rangkaian3(double v1[], double v2[], double R, double C1, double C2, double Src, int i){
+void rangkaian3(double v1[], double v2[], double R, double C1, double C2, double Src, int i, double T){
 	double G1 = C1/T;
 	double G2 = C2/T;
 	double I1 = C1*(v2[i]-v1[i])/T;
@@ -41,7 +39,7 @@ void rangkaian3(double v1[], double v2[], double R, double C1, double C2, double
 	v2[i+1]	  = (Src + I1 + (1/R+G1)*v1[i+1])/(1/R + G1);
 }
 
-void rangkaian3V(double v1[], double v2[], double R, double C1, double C2, double Src, int i){
+void rangkaian3V(double v1[], double v2[], double R, double C1, double C2, double Src, int i, double T){
 	double G1 = C1/T;
 	double G2 = C2/T;
 	double I1 = C1*(v2[i]-v1[i])/T;
@@ -50,21 +48,21 @@ void rangkaian3V(double v1[], double v2[], double R, double C1, double C2, doubl
 	v1[i+1]	  = (I2-I1+(1/R+G1)*v2[i+1])/(1/R+G1+G2);
 }
 
-void rangkaian4(double v1[], double v2[],double R1, double R2, double C, double Src[], int i){
+void rangkaian4(double v1[], double v2[],double R1, double R2, double C, double Src[], int i, double T){
 	double Ga = C/T;
 	double Ia = C*(Src[i]-v2[i])/T;
     v1[i+1]   = Src[i+1];
 	v2[i+1]	  = (Src[i+1]*(Ga+(1/R1))-Ia)/(Ga+(1/R1)+(1/R2));
 }
 
-void rangkaian4I(double v1[], double v2[],double R1, double R2, double C, double Src[], int i){
+void rangkaian4I(double v1[], double v2[],double R1, double R2, double C, double Src[], int i, double T){
     double Ga = C/T;
     double Ia = C*(v1[i]-v2[i])/T;
     v2[i+1]   = Src[i+1]*R2;
     v1[i+1]   = ((Src[i+1]+Ia)/(1/R1+Ga))+v2[i+1];
 }
 
-void rangkaian5(double v2[],double R1, double R2, double C1, double C2, double Src[], int i){
+void rangkaian5(double v2[],double R1, double R2, double C1, double C2, double Src[], int i, double T){
 	double Ga = C1/T;
 	double Gb = C2/T;
 	double G1 = 1/R1;
@@ -74,7 +72,7 @@ void rangkaian5(double v2[],double R1, double R2, double C1, double C2, double S
 	v2[i+1]   = (Src[i]*(Ga+G1)+Ib-Ia)/(Ga+Gb+G1+G2);
 }
 
-void rangkaian5I(double v1[],double v2[],double R1, double R2, double C1, double C2, double Is, int i){
+void rangkaian5I(double v1[],double v2[],double R1, double R2, double C1, double C2, double Is, int i, double T){
 	double Ga = C1/T;
 	double Gb = C2/T;
 	double G1 = 1/R1;
@@ -85,27 +83,27 @@ void rangkaian5I(double v1[],double v2[],double R1, double R2, double C1, double
 	v1[i+1]	  = (Is+Ia)/(G1+Ga)+v2[i+1];
 }
 
-void rangkaian6(double v1[],double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i){
+void rangkaian6(double v1[],double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i, double T){
 	double Ga = C1/T;
 	double Gb = C2/T;
 	double Ia = Ga*(Src[i]-v2[i]);
 	double Ib = Gb*(v3[i]);
 	v1[i+1] = Src[i+1];
-	v2[i+1] = ((Src[i+1]*Ga)-Ia+(Ib/(1+(Gb*R1))))/(Ga+(Gb/(1+Gb*R1))+(1/R2));
-	v3[i+1] = (v2[i+1]+(Ib*R1))/(1+(R1*Gb));
+	v2[i+1] = ((Src[i+1]*Ga)-Ia+(Ib/(1+(Gb*R2))))/(Ga+(Gb/(1+Gb*R2))+(1/R1));
+	v3[i+1] = (v2[i+1]+(Ib*R2))/(1+(R2*Gb));
 } //Kalo pas source sinus, IC2 ada initial valuenya gatau kenapa...
 
-void rangkaian6I(double v1[],double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i){
+void rangkaian6I(double v1[],double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i, double T){
 	double Ga = C1/T;
 	double Gb = C2/T;
 	double Ia = Ga*(v1[i]-v2[i]);
 	double Ib = Gb*(v3[i]);
-	v2[i+1] = (Src[i+1]+(Ib/(1+(Gb*R1))))/((1/R2)+(Gb/(1+(Gb*R1))));
-	v3[i+1] = (v2[i+1]+(Ib*R1))/(1+(R1*Gb));
+	v2[i+1] = (Src[i+1]+(Ib/(1+(Gb*R2))))/((1/R1)+(Gb/(1+(Gb*R2))));
+	v3[i+1] = (v2[i+1]+(Ib*R2))/(1+(R2*Gb));
 	v1[i+1] = (((Src[i+1]+Ia)/Ga)+v2[i+1]);
 } //Kalo pas source sinus, IC2 ada initial valuenya gatau kenapa...
 
-void rangkaian7I(double v1[], double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i){
+void rangkaian7I(double v1[], double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i, double T){
 	double Ga = C1/T;
 	double Gb = C2/T;
 	double Ia = Ga*v3[i];
@@ -115,7 +113,7 @@ void rangkaian7I(double v1[], double v2[],double v3[],double R1, double R2, doub
 	v1[i+1] = (Src[i+1]*R1)+v2[i+1];
 }
 
-void rangkaian7(double v1[],double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i){
+void rangkaian7(double v1[],double v2[],double v3[],double R1, double R2, double C1, double C2, double Src[], int i, double T){
 	double Ga = C1/T;
 	double Gb = C2/T;
 	double Ia = Ga*v3[i];
@@ -125,7 +123,7 @@ void rangkaian7(double v1[],double v2[],double v3[],double R1, double R2, double
 	v3[i+1] = (v2[i+1]+(Ia*R2))/(1+(Ga*R2));
 }
 
-void rangkaian8(double v1[], double v2[], double v3[], double R1, double R2, double C1, double C2, double src, int i){
+void rangkaian8(double v1[], double v2[], double v3[], double R1, double R2, double C1, double C2, double src, int i, double T){
 	double g1 = C1/T;
 	double g2 = C2/T;
 	double i1 = C1*(v2[i]-v3[i])/T;
@@ -135,7 +133,7 @@ void rangkaian8(double v1[], double v2[], double v3[], double R1, double R2, dou
 	v1[i+1] = (src+v2[i+1]/R1)*R1;
 }
 
-void rangkaian8V(double v1[], double v2[], double v3[], double R1, double R2, double C1, double C2, double src, int i){
+void rangkaian8V(double v1[], double v2[], double v3[], double R1, double R2, double C1, double C2, double src, int i, double T){
 	double g1 = C1/T;
 	double g2 = C2/T;
 	double i1 = C1*(v2[i]-v3[i])/T;
