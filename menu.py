@@ -7,5 +7,5 @@ im2 = plt.imread("rangkaian_2.png")
 # show the image
 plt.imshow(im1)
 plt.show()
-plt.imshow(im1)
+plt.imshow(im2)
 plt.show()
